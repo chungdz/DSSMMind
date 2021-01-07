@@ -55,7 +55,7 @@ def build_examples(rank, args, df, news_info, fout):
         for p in imp_pos_list:
             new_row = []
             new_row.append(int(imp_id))
-            new_row.append(p[0])
+            new_row.append(0)
             new_row += p[1]
             sampled = random.sample(imp_neg_list, 4)
             for neg in sampled:
