@@ -15,7 +15,6 @@ import math
 from dssm import DSSM
 from dataset import FMData
 from gather import gather as gather_all
-from libfm import LibFM
 from utils.log_util import convert_omegaconf_to_dict
 from utils.train_util import set_seed
 from utils.train_util import save_checkpoint_by_epoch
