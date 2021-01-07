@@ -19,8 +19,8 @@ class ForwardNet(nn.Module):
         nn.init.xavier_uniform_(self.l2.weight)
 
     def forward(self, x):
-        x = F.tanh(self.l1(x))
-        x = F.tanh(self.l2(x))
+        x = torch.tanh(self.l1(x))
+        x = torch.tanh(self.l2(x))
         
         return x
 

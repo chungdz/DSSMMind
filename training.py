@@ -49,8 +49,8 @@ def run(cfg, rank, device, finished, train_dataset_path, valid_dataset):
     valid_data_loader = DataLoader(valid_dataset, batch_size=cfg.batch_size, shuffle=False)
 
     # # Build model.
-    model = LibFM(cfg)
-
+    model = DSSM(cfg)
+    model.to(device)
     # Build optimizer.
     steps_one_epoch = len(train_data_loader)
     train_steps = cfg.epoch * steps_one_epoch
@@ -249,7 +249,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--filenum', type=int, default=10)
     parser.add_argument('--batch_size', type=int, default=16, help='input batch size')
-    parser.add_argument('--hidden_size', type=int, default=100, help='hidden state size')
+    parser.add_argument('--hidden_size', type=int, default=300, help='hidden state size')
     parser.add_argument('--gpus', type=int, default=2, help='gpu_num')
     parser.add_argument('--epoch', type=int, default=10, help='the number of epochs to train for')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rate')  # [0.001, 0.0005, 0.0001]
@@ -258,6 +258,7 @@ if __name__ == '__main__':
     parser.add_argument("--max_hist_length", default=100, type=int, help="Max length of the click history of the user.")
     parser.add_argument("--word_len", default=10, type=int, help="Max length of the title")
     parser.add_argument("--model", default='fm', type=str)
+    parser.add_argument("--neg_num", default=4, type=int, help="neg imp")
     opt = parser.parse_args()
     logging.warning(opt)
 
