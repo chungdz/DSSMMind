@@ -39,7 +39,6 @@ test_news = pd.read_csv(f_test_news, sep="\t", encoding="utf-8",
                         quoting=3)
 all_news = pd.concat([all_news, test_news], ignore_index=True)
 all_news = all_news.drop_duplicates("newsid")
-print("All news: {}".format(len(all_news)))
 
 news_dict = {}
 word_dict = {'<pad>': 0}
@@ -64,6 +63,7 @@ for n, title in all_news[['newsid', "title"]].values:
     news_dict[n]['title'] = wid_arr[:10]
 
 ## paddning news
+news_dict['<pad>']= {}
 news_dict['<pad>']['idx'] = 0
 tarr = removePunctuation("This is the title of the padding news").split()
 wid_arr = []
