@@ -66,7 +66,7 @@ def main(args):
 
     processes = []
     for i in range(args.processes):
-        output_path = os.path.join("data", args.fout,  "dev-{}.npy".format(i))
+        output_path = os.path.join("data", args.fout,  "test-{}.npy".format(i))
         p = mp.Process(target=build_examples, args=(
             i, args, dfs[i], news_info, output_path))
         p.start()
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     # Path options.
-    parser.add_argument("--fsamples", default="valid/behaviors.tsv", type=str,
+    parser.add_argument("--fsamples", default="test/behaviors.tsv", type=str,
                         help="Path of the valid samples file.")
     parser.add_argument("--fout", default="raw", type=str,
                         help="Path of the output dir.")
