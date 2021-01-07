@@ -34,32 +34,16 @@ def build_examples(rank, args, df, news_info, fout):
             his_title_list = his_title_list[-args.max_hist_length * word_len:]
 
         imp_list = str(imp).split(' ')
-        imp_pos_list = []
-        imp_neg_list = []
+        
         for impre in imp_list:
             arr = impre.split('-')
             curt = news_info[arr[0]]['title']
             label = int(arr[1])
-            if label == 0:
-                imp_neg_list.append((label, curt))
-            elif label == 1:
-                imp_pos_list.append((label, curt))
-            else:
-                raise Exception('label error!')
         
-        neg_num = len(imp_neg_list)
-        if neg_num < 4:
-            for i in range(4 - neg_num):
-                imp_neg_list.append((0, news_info['<pad>']['title']))
-        
-        for p in imp_pos_list:
             new_row = []
             new_row.append(int(imp_id))
-            new_row.append(p[0])
-            new_row += p[1]
-            sampled = random.sample(imp_neg_list, 4)
-            for neg in sampled:
-                new_row += neg[1]
+            new_row.append(label)
+            new_row += curt
             new_row += his_title_list
             data_list.append(new_row)
     
@@ -77,7 +61,7 @@ def main(args):
 
     processes = []
     for i in range(args.processes):
-        output_path = os.path.join("data", args.fout,  "train-{}.npy".format(i))
+        output_path = os.path.join("data", args.fout,  "dev-{}.npy".format(i))
         p = mp.Process(target=build_examples, args=(
             i, args, dfs[i], news_info, output_path))
         p.start()
@@ -90,8 +74,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     # Path options.
-    parser.add_argument("--fsamples", default="train/behaviors.tsv", type=str,
-                        help="Path of the training samples file.")
+    parser.add_argument("--fsamples", default="valid/behaviors.tsv", type=str,
+                        help="Path of the valid samples file.")
     parser.add_argument("--fout", default="raw", type=str,
                         help="Path of the output dir.")
     parser.add_argument("--max_hist_length", default=100, type=int,
