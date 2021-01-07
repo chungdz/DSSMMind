@@ -54,7 +54,7 @@ class DSSM(nn.Module):
         doc = self.docNet(doc)
         doc = doc.view(-1, neg_num + 1, 128)
         query = self.queryNet(query)
-        query = query.repeat(1, self.neg_num + 1).view(-1, neg_num + 1, 128)
+        query = query.repeat(1, neg_num + 1).view(-1, neg_num + 1, 128)
         
         similarity = self.cos(query, doc)
 
