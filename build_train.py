@@ -56,6 +56,7 @@ def build_examples(rank, args, df, news_info, fout):
                 imp_neg_list.append((0, news_info['<pad>']['title'], news_info['<pad>']['idx']))
         
         for p in imp_pos_list:
+            sampled = random.sample(imp_neg_list, 4)
             new_row = []
             new_row.append(int(imp_id))
             new_row.append(0)
@@ -63,9 +64,9 @@ def build_examples(rank, args, df, news_info, fout):
             new_row.append(p[2])
             for neg in sampled:
                 new_row.append(neg[2])
+            new_row += his_idx_list
             # title
             new_row += p[1]
-            sampled = random.sample(imp_neg_list, 4)
             for neg in sampled:
                 new_row += neg[1]
             new_row += his_title_list

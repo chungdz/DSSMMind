@@ -48,6 +48,7 @@ def build_examples(rank, args, df, news_info, fout):
             new_row.append(label)
             # idx
             new_row.append(curn)
+            new_row += his_idx_list
             # title
             new_row += curt
             new_row += his_title_list

@@ -51,6 +51,7 @@ def build_examples(rank, args, df, news_info, fout):
             new_row.append(int(imp_id))
             new_row.append(label)
             new_row.append(curn)
+            new_row += his_idx_list
             new_row += curt
             new_row += his_title_list
             data_list.append(new_row)

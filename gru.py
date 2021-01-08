@@ -26,8 +26,8 @@ class GRURec(nn.Module):
         if mode == 'test':
             neg_num = 0
 
-        news = x[:, :neg_num + 1]
-        title = x[:, neg_num + 1:]
+        news = x[:, :neg_num + 1 + self.his_len]
+        title = x[:, neg_num + 1 + self.his_len:]
 
         doc = title[:, :self.word_len * (neg_num + 1)]
         his = title[:, self.word_len * (neg_num + 1):]
