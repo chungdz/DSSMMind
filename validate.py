@@ -20,6 +20,7 @@ from utils.train_util import set_seed
 from utils.train_util import save_checkpoint_by_epoch
 from utils.eval_util import group_labels
 from utils.eval_util import cal_metric
+from gru import GRURec
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
@@ -115,7 +116,10 @@ def main(cfg):
     word_dict = json.load(open('./data/word.json', 'r', encoding='utf-8'))
     cfg.word_num = len(word_dict)
 
-    model = DSSM(cfg)
+    if cfg.model == 'dssm':
+        model = DSSM(cfg)
+    elif cfg.model == 'gru':
+        model = GRURec(cfg)
 
     saved_model_path = os.path.join('./checkpoint/', 'model.ep{0}'.format(cfg.epoch))
     print("Load from:", saved_model_path)
@@ -162,7 +166,7 @@ if __name__ == '__main__':
     parser.add_argument('--momentum', type=float, default=0.9, help='sgd momentum')  # [0.001, 0.0005, 0.0001, 0.00005, 0.00001]
     parser.add_argument('--port', type=int, default=9337)
     parser.add_argument("--max_hist_length", default=100, type=int, help="Max length of the click history of the user.")
-    parser.add_argument("--model", default='fm', type=str)
+    parser.add_argument("--model", default='dssm', type=str)
     parser.add_argument("--word_len", default=10, type=int, help="Max length of the title")
     parser.add_argument("--neg_num", default=4, type=int, help="neg imp")
     opt = parser.parse_args()
