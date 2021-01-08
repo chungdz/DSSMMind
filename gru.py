@@ -20,6 +20,7 @@ class GRURec(nn.Module):
         self.embed = nn.Embedding(args.word_num, hidden)
         self.news_embed = nn.Embedding(args.news_num, hidden)
         self.gru = nn.GRU(hidden, hidden)
+        self.id_gru = nn.GRU(hidden, hidden)
     
     def forward(self, x, mode='train'):
         neg_num = self.neg_number
@@ -31,12 +32,18 @@ class GRURec(nn.Module):
 
         doc = title[:, :self.word_len * (neg_num + 1)]
         his = title[:, self.word_len * (neg_num + 1):]
+        doc_id = news[:, :neg_num + 1]
+        his_id = news[:, neg_num + 1:]
 
-        his = his.view(-1, self.his_len, self.word_len)
         doc = doc.view(-1, (1 + neg_num), self.word_len)
+        his = his.view(-1, self.his_len, self.word_len)
+        doc_id = doc_id.view(-1, (1 + neg_num))
+        his_id = his_id.view(-1, self.his_len)
 
         doc = self.embed(doc)
         his = self.embed(his)
+        doc_id = self.news_embed(doc_id)
+        his_id = self.news_embed(his_id)
 
         doc = doc.mean(dim=-2)
         his = his.mean(dim=-2)
@@ -45,7 +52,14 @@ class GRURec(nn.Module):
         output, hn = self.gru(his)
         user = hn.permute(1, 0, 2).squeeze(1)
 
+        his_id = his_id.permute(1, 0, 2)
+        output_id, hn_id = self.id_gru(his_id)
+        user_id = hn_id.permute(1, 0, 2).squeeze(1)
+
         user = user.repeat(1, neg_num + 1).view(-1, neg_num + 1, 300)
         similarity = torch.sum(doc * user, dim=-1)
 
-        return similarity
+        user_id = user_id.repeat(1, neg_num + 1).view(-1, neg_num + 1, 300)
+        similarity_id = torch.sum(doc_id * user_id, dim=-1)
+
+        return similarity + similarity_id
