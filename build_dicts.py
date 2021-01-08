@@ -43,7 +43,7 @@ all_news = all_news.drop_duplicates("newsid")
 news_dict = {}
 word_dict = {'<pad>': 0}
 word_idx = 1
-news_idx = 1
+news_idx = 2
 for n, title in all_news[['newsid', "title"]].values:
     news_dict[n] = {}
     news_dict[n]['idx'] = news_idx
@@ -62,7 +62,7 @@ for n, title in all_news[['newsid', "title"]].values:
             wid_arr.append(0)
     news_dict[n]['title'] = wid_arr[:10]
 
-## paddning news
+## paddning news for impression
 news_dict['<pad>']= {}
 news_dict['<pad>']['idx'] = 0
 tarr = removePunctuation("This is the title of the padding news").split()
@@ -77,6 +77,10 @@ if cur_len < 10:
     for l in range(10 - cur_len):
         wid_arr.append(0)
 news_dict['<pad>']['title'] = wid_arr[:10]
+## paddning news for history
+news_dict['<his>']= {}
+news_dict['<his>']['idx'] = 1
+news_dict['<his>']['title'] = list(np.zeros(10))
 
 print('all word', len(word_dict))
 print('all news', len(news_dict))

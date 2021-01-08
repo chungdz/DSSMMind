@@ -20,8 +20,8 @@ def build_examples(rank, args, df, news_info, fout):
             his_list = str(hist).strip().split()
 
         word_len = 10
-        empty_news = list(np.zeros(word_len))
 
+        his_idx_list = [news_info[h]['idx'] for h in his_list]
         his_title_list = []
         for h in his_list:
             his_title_list += news_info[h]['title']
@@ -29,8 +29,10 @@ def build_examples(rank, args, df, news_info, fout):
         hislen = len(his_list)
         if hislen < args.max_hist_length:
             for _ in range(args.max_hist_length - hislen):
-                his_title_list += empty_news
+                his_idx_list.append(news_info['<his>']['idx'])
+                his_title_list += news_info['<his>']['title']
         else:
+            his_idx_list = his_idx_list[-args.max_hist_length:]
             his_title_list = his_title_list[-args.max_hist_length * word_len:]
 
         imp_list = str(imp).split(' ')
@@ -38,24 +40,30 @@ def build_examples(rank, args, df, news_info, fout):
         imp_neg_list = []
         for impre in imp_list:
             arr = impre.split('-')
+            curn = news_info[arr[0]]['idx']
             curt = news_info[arr[0]]['title']
             label = int(arr[1])
             if label == 0:
-                imp_neg_list.append((label, curt))
+                imp_neg_list.append((label, curt, curn))
             elif label == 1:
-                imp_pos_list.append((label, curt))
+                imp_pos_list.append((label, curt, curn))
             else:
                 raise Exception('label error!')
         
         neg_num = len(imp_neg_list)
         if neg_num < 4:
             for i in range(4 - neg_num):
-                imp_neg_list.append((0, news_info['<pad>']['title']))
+                imp_neg_list.append((0, news_info['<pad>']['title'], news_info['<pad>']['idx']))
         
         for p in imp_pos_list:
             new_row = []
             new_row.append(int(imp_id))
             new_row.append(0)
+            # idx
+            new_row.append(p[2])
+            for neg in sampled:
+                new_row.append(neg[2])
+            # title
             new_row += p[1]
             sampled = random.sample(imp_neg_list, 4)
             for neg in sampled:

@@ -18,6 +18,7 @@ class GRURec(nn.Module):
         self.neg_number = args.neg_num
         self.hidden = hidden
         self.embed = nn.Embedding(args.word_num, hidden)
+        self.news_embed = nn.Embedding(args.news_num, hidden)
         self.gru = nn.GRU(hidden, hidden)
     
     def forward(self, x, mode='train'):
@@ -25,8 +26,11 @@ class GRURec(nn.Module):
         if mode == 'test':
             neg_num = 0
 
-        doc = x[:, :self.word_len * (neg_num + 1)]
-        his = x[:, self.word_len * (neg_num + 1):]
+        news = x[:, :neg_num + 1]
+        title = x[:, neg_num + 1:]
+
+        doc = title[:, :self.word_len * (neg_num + 1)]
+        his = title[:, self.word_len * (neg_num + 1):]
 
         his = his.view(-1, self.his_len, self.word_len)
         doc = doc.view(-1, (1 + neg_num), self.word_len)

@@ -24,8 +24,8 @@ def build_examples(rank, args, df, news_info, fout):
             his_list = str(hist).strip().split()
 
         word_len = 10
-        empty_news = list(np.zeros(word_len))
 
+        his_idx_list = [news_info[h]['idx'] for h in his_list]
         his_title_list = []
         for h in his_list:
             his_title_list += news_info[h]['title']
@@ -33,14 +33,16 @@ def build_examples(rank, args, df, news_info, fout):
         hislen = len(his_list)
         if hislen < args.max_hist_length:
             for _ in range(args.max_hist_length - hislen):
-                his_title_list += empty_news
+                his_idx_list.append(news_info['<his>']['idx'])
+                his_title_list += news_info['<his>']['title']
         else:
+            his_idx_list = his_idx_list[-args.max_hist_length:]
             his_title_list = his_title_list[-args.max_hist_length * word_len:]
 
         imp_list = str(imp).split(' ')
         clabel = 0
         for impre in imp_list:
-            
+            curn = news_info[impre]['idx']
             curt = news_info[impre]['title']
             label = clabel
             clabel = clabel ^ 1
@@ -48,6 +50,7 @@ def build_examples(rank, args, df, news_info, fout):
             new_row = []
             new_row.append(int(imp_id))
             new_row.append(label)
+            new_row.append(curn)
             new_row += curt
             new_row += his_title_list
             data_list.append(new_row)

@@ -263,9 +263,8 @@ if __name__ == '__main__':
     parser.add_argument('--port', type=int, default=9337)
     parser.add_argument("--max_hist_length", default=100, type=int, help="Max length of the click history of the user.")
     parser.add_argument("--word_len", default=10, type=int, help="Max length of the title")
-    parser.add_argument("--model", default='fm', type=str)
+    parser.add_argument("--model", default='dssm', type=str)
     parser.add_argument("--neg_num", default=4, type=int, help="neg imp")
-    parser.add_argument("--model", default='fm', type=str)
     opt = parser.parse_args()
     logging.warning(opt)
 
