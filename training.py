@@ -23,6 +23,7 @@ import math
 from dataset import FMData
 from gather import gather as gather_all
 from dssm import DSSM
+from gru import GRURec
 from utils.log_util import convert_omegaconf_to_dict
 from utils.train_util import set_seed
 from utils.train_util import save_checkpoint_by_epoch
@@ -49,7 +50,12 @@ def run(cfg, rank, device, finished, train_dataset_path, valid_dataset):
     valid_data_loader = DataLoader(valid_dataset, batch_size=cfg.batch_size, shuffle=False)
 
     # # Build model.
-    model = DSSM(cfg)
+    if cfg.model == 'dssm':
+        model = DSSM(cfg)
+    elif cfg.model == 'gru':
+        model = GRURec(cfg)
+    else:
+        raise Exception('model error')
     model.to(device)
     # Build optimizer.
     steps_one_epoch = len(train_data_loader)
@@ -259,6 +265,7 @@ if __name__ == '__main__':
     parser.add_argument("--word_len", default=10, type=int, help="Max length of the title")
     parser.add_argument("--model", default='fm', type=str)
     parser.add_argument("--neg_num", default=4, type=int, help="neg imp")
+    parser.add_argument("--model", default='fm', type=str)
     opt = parser.parse_args()
     logging.warning(opt)
 
