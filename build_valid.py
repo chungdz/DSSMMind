@@ -19,7 +19,7 @@ def build_examples(rank, args, df, news_info, fout):
         else:
             his_list = str(hist).strip().split()
 
-        word_len = 10
+        word_len = args.max_title
 
         his_idx_list = [news_info[h]['idx'] for h in his_list]
         his_title_list = []
@@ -58,9 +58,9 @@ def build_examples(rank, args, df, news_info, fout):
     np.save(fout, datanp)
 
 def main(args):
-    f_train_beh = os.path.join("data", args.fsamples)
+    f_train_beh = os.path.join(args.root, args.fsamples)
     df = pd.read_csv(f_train_beh, sep="\t", encoding="utf-8", names=["id", "uid", "time", "hist", "imp"])
-    news_info = json.load(open('data/news.json', 'r', encoding='utf-8'))
+    news_info = json.load(open('{}/news.json'.format(args.root), 'r', encoding='utf-8'))
 
     subdf_len = math.ceil(len(df) / args.processes)
     cut_indices = [x * subdf_len for x in range(1, args.processes)]
@@ -68,7 +68,7 @@ def main(args):
 
     processes = []
     for i in range(args.processes):
-        output_path = os.path.join("data", args.fout,  "dev-{}.npy".format(i))
+        output_path = os.path.join(args.root, args.fout,  "{}-{}.npy".format(args.ftype, i))
         p = mp.Process(target=build_examples, args=(
             i, args, dfs[i], news_info, output_path))
         p.start()
@@ -89,7 +89,9 @@ if __name__ == "__main__":
                         help="Max length of the click history of the user.")
     parser.add_argument("--processes", default=40, type=int,
                         help="Processes number")
-
+    parser.add_argument("--root", default="data", type=str)
+    parser.add_argument("--ftype", default="train", type=str)
+    parser.add_argument("--max_title", default=10, type=int)
     args = parser.parse_args()
 
     main(args)

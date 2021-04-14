@@ -223,12 +223,12 @@ def main(cfg):
     print('load dev')
     dev_list = []
     for i in range(cfg.filenum):
-        dev_list.append(np.load("data/raw/dev-{}.npy".format(i)))
+        dev_list.append(np.load("{}/raw/{}-{}.npy".format(cfg.root, cfg.vtype, i)))
     validate_dataset = FMData(np.concatenate(dev_list, axis=0))
     print('load news dict')
-    news_dict = json.load(open('./data/news.json', 'r', encoding='utf-8'))
+    news_dict = json.load(open('./{}/news.json'.format(cfg.root), 'r', encoding='utf-8'))
     print('load words dict')
-    word_dict = json.load(open('./data/word.json', 'r', encoding='utf-8'))
+    word_dict = json.load(open('./{}/word.json'.format(cfg.root), 'r', encoding='utf-8'))
     cfg.news_num = len(news_dict)
     cfg.word_num = len(word_dict)
     cfg.result_path = './result/'
@@ -242,7 +242,7 @@ def main(cfg):
     processes = []
     for rank in range(cfg.gpus):
         p = mp.Process(target=init_processes, args=(
-            cfg, rank, None, "data/raw/train-{}-new.npy".format(rank), valid_dataset_list[rank], finished, run, "nccl"))
+            cfg, rank, None, "{}/raw/train-{}-new.npy".format(cfg.root, rank), valid_dataset_list[rank], finished, run, "nccl"))
         p.start()
         processes.append(p)
 
@@ -265,6 +265,9 @@ if __name__ == '__main__':
     parser.add_argument("--word_len", default=10, type=int, help="Max length of the title")
     parser.add_argument("--model", default='dssm', type=str)
     parser.add_argument("--neg_num", default=4, type=int, help="neg imp")
+    parser.add_argument("--root", default="data", type=str)
+    parser.add_argument("--vtype", default="dev", type=str)
+    parser.add_argument("--max_title", default=10, type=int)
     opt = parser.parse_args()
     logging.warning(opt)
 
