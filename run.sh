@@ -16,3 +16,11 @@ python build_valid.py --processes=10 --max_hist_length=30 --max_title=15 --fsamp
 python build_valid.py --processes=10 --max_hist_length=30 --max_title=15 --fsamples=test_behaviors.tsv --root=MIND --ftype=test
 CUDA_VISIBLE_DEVICES=0,1,2,3 python training.py --gpus=4 --max_hist_length=30 --epoch=4 --batch_size=256 --root=MIND --vtype=dev
 CUDA_VISIBLE_DEVICES=0,1,2,3 python validate.py --gpus=4 --max_hist_length=30 --epoch=11 --filenum=10 --batch_size=256 --root=MIND
+
+python build_dicts.py --root=Adressa --max_title=15
+python build_train.py --processes=10 --max_hist_length=30 --max_title=15 --root=Adressa --fsamples=train_behaviors.tsv
+python resplit.py --filenum 10 --fsamples=Adressa/raw/train
+python build_valid.py --processes=10 --max_hist_length=30 --max_title=15 --fsamples=dev_behaviors.tsv --root=Adressa --ftype=dev
+python build_valid.py --processes=10 --max_hist_length=30 --max_title=15 --fsamples=test_behaviors.tsv --root=Adressa --ftype=test
+CUDA_VISIBLE_DEVICES=0,1,2,3 python training.py --gpus=4 --max_hist_length=30 --epoch=4 --batch_size=256 --root=Adressa --vtype=dev
+CUDA_VISIBLE_DEVICES=0,1,2,3 python validate.py --gpus=4 --max_hist_length=30 --epoch=11 --filenum=10 --batch_size=256 --root=Adressa
