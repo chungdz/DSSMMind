@@ -78,4 +78,4 @@ class DSSM(nn.Module):
         similarity = self.cos(query, doc)
         similarity_id = self.cos(query_id, doc_id)
 
-        return similarity + similarity_id
+        return similarity
