@@ -149,7 +149,7 @@ def main(cfg):
         
         gather(cfg, point_num)
     
-    gather_all(cfg.result_path, file_num, validate=False, save=True)
+    gather_all(cfg.result_path, file_num, validate=True, save=True)
         
 
 
